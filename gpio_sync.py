@@ -1,11 +1,24 @@
 import Jetson.GPIO as GPIO
 import time as time          #引用需要用的库
-LED_Pin = 11
+lidar_trigger = 11
+camera_trigger = 13
 GPIO.setmode(GPIO.BOARD)
-GPIO.setup(LED_Pin, GPIO.OUT)#设置要操作的引脚,并将引脚设置为输出引脚
-while (True):
-   GPIO.output(LED_Pin, GPIO.HIGH)
-   time.sleep(2)
-   GPIO.output(LED_Pin, GPIO.LOW)
-   time.sleep(2)              #通过切换GPIO的电平来点亮和熄灭LED
-GPIO.cleanup()                #最后在退出循环的时候清楚GPIO的状态   
+GPIO.setup(lidar_trigger, GPIO.OUT)
+GPIO.setup(camera_trigger, GPIO.OUT)
+
+trig = 0
+
+try:
+    while (True):
+        if trig % 10 == 0:
+            GPIO.output(lidar_trigger, GPIO.HIGH)
+        GPIO.output(camera_trigger, GPIO.HIGH)
+        time.sleep(0.1)
+        
+        GPIO.output(lidar_trigger, GPIO.LOW)
+        GPIO.output(camera_trigger, GPIO.LOW)
+
+        trig += 1
+except KeyboardInterrupt:
+    GPIO.cleanup()
+
